@@ -7,6 +7,7 @@ use yii\rest\ActiveController;
 use app\models\Order;
 use app\models\OrderProduct;
 use yii\web\BadRequestHttpException;
+use yii\web\NotFoundHttpException;
 class OrderController extends ActiveController
 {
     public $modelClass = 'app\models\Order';
@@ -23,17 +24,49 @@ class OrderController extends ActiveController
             ],
         ];
     }
+    public function actions()
+    {
+        $actions = parent::actions();
+        unset($actions['index'], $actions['view'], $actions['create'], $actions['update'], $actions['delete']);
+        return $actions;
+    }
 
     public function actionIndex()
     {
-        $searchModel = new Order();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $orders = Order::find()->all();
+        
+        $ordersWithProducts = [];
+        ;
+        foreach ($orders as $order) {
+            $orderWithProducts = [
+                'id' => $order->id,
+                'products' => [],
+                'total' => 0
+            ];
+            $totalOrder = 0;
+            // Get the products associated with the order
+            $orderProducts = $order->getOrderProducts()->all();
+            
+            foreach ($orderProducts as $orderProduct) {
+                $product = $orderProduct->product;
+                $quantity = $orderProduct->quantity;
+                $totalOrder = $totalOrder + $quantity*$product->Price;
+                // Include product, quantity, and selected fields in the response
+                $orderWithProducts['products'][] = [
+                    'id' => $product->id,
+                    'name' => $product->Name,
+                    'price' => $product->Price,
+                    'quantity' => $quantity,
+                    'subtotal' => $quantity*$product->Price
+                ];
+            }
+            $orderWithProducts['total'] = $totalOrder;
+            $ordersWithProducts[] = $orderWithProducts;
+        }
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $ordersWithProducts;
     }
+
 
     /**
      * Displays a single OrderProduct model.
@@ -43,13 +76,42 @@ class OrderController extends ActiveController
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $order = Order::findOne($id);
+
+        if ($order === null) {
+            throw new NotFoundHttpException("Order not found.");
+        }
+
+        $orderWithProducts = [
+            'id' => $order->id,
+            'products' => [],
+            'total' => 0
+        ];
+        $totalOrder = 0;
+
+        // Get the products associated with the order
+        $orderProducts = $order->getOrderProducts()->all();
+
+        foreach ($orderProducts as $orderProduct) {
+            $product = $orderProduct->product;
+            $quantity = $orderProduct->quantity;
+            $totalOrder += $quantity * $product->Price;
+
+            // Include product, quantity, and selected fields in the response
+            $orderWithProducts['products'][] = [
+                'id' => $product->id,
+                'name' => $product->Name,
+                'price' => $product->Price,
+                'quantity' => $quantity,
+                'subtotal' => $quantity * $product->Price
+            ];
+        }
+
+        $orderWithProducts['total'] = $totalOrder;
+
+        return $orderWithProducts;
     }
     
-
-
     public function actionCreate(){
         $order = new Order();
 
@@ -88,6 +150,7 @@ class OrderController extends ActiveController
                             }
                         }else{
                             $transaction->rollBack();
+                            $order->delete();
                             throw new BadRequestHttpException('Ordered Quantity Exceed Stock Capacity.');
     
                         }

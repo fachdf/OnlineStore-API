@@ -14,8 +14,14 @@ $config = [
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'fErAMUPBOwCnK_dNydHgSJLxuWEkGuCN',
+            'cookieValidationKey' => '2cOdUE1kIaCpz_2GAMH-poXkADRo81eG',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ],
         ],
+        // 'response' => [
+        //     'format' => yii\web\Response::FORMAT_JSON,
+        // ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
@@ -42,14 +48,28 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'product',
+                    'pluralize' => false, // Prevents pluralization of the controller name
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'order',
+                    'pluralize' => false, // Prevents pluralization of the controller name
+                ],
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'orderproduct',
+                    'pluralize' => false, // Prevents pluralization of the controller name
+                ],
             ],
         ],
-        */
+        
     ],
     'params' => $params,
 ];

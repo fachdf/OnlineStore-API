@@ -25,8 +25,8 @@ class m231017_060145_create_tables extends Migration
             'id' => $this->primaryKey(),
         ]);
 
-        // Create the order_product junction table
-        $this->createTable('order_product', [
+        // Create the orderproduct junction table
+        $this->createTable('orderproduct', [
             'id' => $this->primaryKey(),
             'order_id' => $this->integer()->notNull(),
             'product_id' => $this->integer()->notNull(),
@@ -34,8 +34,8 @@ class m231017_060145_create_tables extends Migration
         ]);
 
         // Define foreign key constraints
-        $this->addForeignKey('fk-order-product-order', 'order_product', 'order_id', 'order', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('fk-order-product-product', 'order_product', 'product_id', 'product', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('fk-order-product-order', 'orderproduct', 'order_id', 'order', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('fk-order-product-product', 'orderproduct', 'product_id', 'product', 'id', 'CASCADE', 'CASCADE');
     }
 
     /**
@@ -44,7 +44,7 @@ class m231017_060145_create_tables extends Migration
     public function safeDown()
     {
         // Drop the tables in reverse order
-        $this->dropTable('order_product');
+        $this->dropTable('orderproduct');
         $this->dropTable('order');
         $this->dropTable('product');
     }

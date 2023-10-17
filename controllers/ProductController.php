@@ -14,7 +14,18 @@ class ProductController extends ActiveController
     /**
      * Define any custom actions or behaviors here.
      */
-
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => \yii\filters\ContentNegotiator::class,
+                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'formats' => [
+                    'application/json' => \yii\web\Response::FORMAT_JSON,
+                ],
+            ],
+        ];
+    }
     public function actions()
     {
         $actions = parent::actions();

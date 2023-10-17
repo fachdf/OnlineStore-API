@@ -4,7 +4,7 @@ use app\models\OrderProduct;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
-use yii\grid\GridView;
+use yii\widgets\ListView;
 
 /** @var yii\web\View $this */
 /** @var app\models\OrderProductSearch $searchModel */
@@ -21,26 +21,15 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Order Product', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <?= GridView::widget([
+    <?= ListView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'order_id',
-            'product_id',
-            'quantity',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, OrderProduct $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->id]);
-                 }
-            ],
-        ],
-    ]); ?>
+        'itemOptions' => ['class' => 'item'],
+        'itemView' => function ($model, $key, $index, $widget) {
+            return Html::a(Html::encode($model->id), ['view', 'id' => $model->id]);
+        },
+    ]) ?>
 
 
 </div>

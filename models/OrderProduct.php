@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "order_product".
+ * This is the model class for table "orderproduct".
  *
  * @property int $id
  * @property int $order_id
@@ -15,14 +15,14 @@ use Yii;
  * @property Order $order
  * @property Product $product
  */
-class OrderProduct extends \yii\db\ActiveRecord
+class Orderproduct extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'order_product';
+        return 'orderproduct';
     }
 
     /**

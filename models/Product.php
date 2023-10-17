@@ -11,6 +11,10 @@ class Product extends ActiveRecord
         return 'product';
     }
 
+    public static function primaryKey()
+    {
+        return ['id'];
+    }
     public function rules()
     {
         return [
@@ -26,7 +30,7 @@ class Product extends ActiveRecord
         return $this->hasMany(Order::class, ['id' => 'order_id'])
         ->via('OrderProduct', function ($query) {
             // Define the relationship through the junction table
-            $query->from(['OrderProduct' => 'order_product']);
+            $query->from(['OrderProduct' => 'orderproduct']);
             $query->where('OrderProduct.product_id = :product_id', [':product_id' => $this->id]);
         });
     }

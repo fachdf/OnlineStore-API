@@ -2,133 +2,83 @@
 
 namespace app\controllers;
 
-use app\models\Orderproduct;
-use app\models\OrderProductSearch;
+use Yii;
+use app\models\OrderProduct;
 use yii\rest\ActiveController;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\ServerErrorHttpException;
-/**
- * OrderProductController implements the CRUD actions for OrderProduct model.
- */
+
 class OrderProductController extends ActiveController
 {
-    public $modelClass = 'app\models\Orderproduct';
-    /**
-     * @inheritDoc
-     */
+    public $modelClass = 'app\models\OrderProduct';
 
     /**
-     * Lists all OrderProduct models.
-     *
-     * @return string
+     * Set behaviour to respond using JSON instead of views
      */
-
-     public function behaviors()
-     {
-         return [
-             [
-                 'class' => \yii\filters\ContentNegotiator::class,
-                 'only' => ['index', 'view', 'create', 'update', 'delete'],
-                 'formats' => [
-                     'application/json' => \yii\web\Response::FORMAT_JSON,
-                 ],
-             ],
-         ];
-     }
-    public function actionIndex()
+    public function behaviors()
     {
-        $searchModel = new OrderProductSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return [
+            [
+                'class' => \yii\filters\ContentNegotiator::class,
+                'only' => ['index', 'view', 'create', 'update', 'delete'],
+                'formats' => [
+                    'application/json' => \yii\web\Response::FORMAT_JSON,
+                ],
+            ],
+        ];
     }
 
     /**
-     * Displays a single OrderProduct model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
+     * Override parent's method
+     */
+    public function actions()
+    {
+        $actions = parent::actions();
+
+        unset($actions['index'], $actions['view']);
+
+        return $actions;
+    }
+
+    /**
+     * Custom action to list all products.
+     */
+    public function actionIndex()
+    {
+        $products = OrderProduct::find()->all();
+
+        return $products;
+    }
+
+    /**
+     * Custom action to view a OrderProduct by ID.
+     *
+     * @param int $id
+     * @return OrderProduct
+     * @throws NotFoundHttpException if the OrderProduct is not found
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $OrderProduct = OrderProduct::findOne($id);
+
+        if ($OrderProduct === null) {
+            throw new NotFoundHttpException("OrderProduct not found.");
+        }
+
+        return $OrderProduct;
     }
 
-    /**
-     * Creates a new OrderProduct model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
     public function actionCreate()
     {
-        $model = new OrderProduct();
-
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
+        $OrderProduct = new OrderProduct();
+        $OrderProduct->load(Yii::$app->request->getBodyParams(), '');
+        
+        if ($OrderProduct->save()) {
+            Yii::$app->response->setStatusCode(201); // Set the response status code to 201 (Created)
+            return $OrderProduct;
         } else {
-            $model->loadDefaultValues();
+            Yii::$app->response->setStatusCode(422); // Set the response status code to 422 (Unprocessable Entity)
+            return ['errors' => $OrderProduct->getErrors()];
         }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
     }
 
-    /**
-     * Updates an existing OrderProduct model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing OrderProduct model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the OrderProduct model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return OrderProduct the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = OrderProduct::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
 }

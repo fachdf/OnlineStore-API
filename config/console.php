@@ -35,6 +35,9 @@ $config = [
         ],
     ],
     */
+    'controllerMap' => [
+        'generate-orders' => 'app\commands\GenerateOrdersCommand',
+    ],
 ];
 
 if (YII_ENV_DEV) {

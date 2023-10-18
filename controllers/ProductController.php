@@ -12,7 +12,7 @@ class ProductController extends ActiveController
     public $modelClass = 'app\models\Product';
 
     /**
-     * Define any custom actions or behaviors here.
+     * Set behaviour to respond using JSON instead of views
      */
     public function behaviors()
     {
@@ -26,6 +26,10 @@ class ProductController extends ActiveController
             ],
         ];
     }
+
+    /**
+     * Custom action to list all products.
+     */
     public function actions()
     {
         $actions = parent::actions();

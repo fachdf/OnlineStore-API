@@ -31,6 +31,7 @@ class m231017_060145_create_tables extends Migration
             'order_id' => $this->integer()->notNull(),
             'product_id' => $this->integer()->notNull(),
             'quantity' => $this->integer()->notNull(),
+            'discount' => $this->integer()->defaultValue(0),
         ]);
 
         // Define foreign key constraints
@@ -48,19 +49,4 @@ class m231017_060145_create_tables extends Migration
         $this->dropTable('order');
         $this->dropTable('product');
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m231017_060145_create_tables cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

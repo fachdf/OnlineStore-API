@@ -10,10 +10,12 @@ class Order extends ActiveRecord
     {
         return 'order';
     }
+    
     public static function primaryKey()
     {
         return ['id'];
     }
+
     // Define a relation to products via OrderProduct
     public function getProducts()
     {

@@ -22,18 +22,19 @@ This Yii2 RESTful API application is created for the Fomotoko backend assesment 
 - **Create Order**: `POST /order` - Create a new order with a list of products and quantities.
 - **Get All Order**: `GET /order` - Retrieve details of all existing order by its ID.
 - **Get Order By ID**: `GET /order/{id}` - Retrieve details of a specific order by its ID.
-
+#### Try It Now
+Endpoint : `https://onlinestore-api.000webhostapp.com/OnlineStore-API/web/order`
 ### Product
 - **Create Product**: `POST /product` - Create a new product with details such as Name, Price, and Stock.
 - **Get Products**: `GET /product` - Retrieve a list of all available products.
 - **Update Product**: `PUT /product/{id}` - Update the details of a specific product by its ID.
-
+#### Try It Now
+Endpoint : `https://onlinestore-api.000webhostapp.com/OnlineStore-API/web/product`
 ### Custom Function
 - **Flash Sale Order Generation**: To process "Flash Sale" orders for specific products and discounts, run the following command:
 	```
 	php yii generate-orders/generateorders <num_of_order>`
 	```
-
 
 ## API Input Format
 
@@ -62,6 +63,7 @@ The API expects data in JSON format. Here are examples of the input format for p
     ]
 }
 ```
+
 Note that creating an order requires existing Product.
 
 ## Functionality
